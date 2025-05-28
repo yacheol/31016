@@ -1,3 +1,5 @@
+!pip install streamlit plotly
+
 import plotly.express as px
 
 # 각 증상별로 당뇨병 유무에 따라 평균 비율 계산
