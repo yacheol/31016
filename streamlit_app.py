@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#matplotlib 설치
-!pip install matplotlib
 streamlit run streamlit_app.py
 
 # 파일 업로드 또는 로컬 데이터 로딩
