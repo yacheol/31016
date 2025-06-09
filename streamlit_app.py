@@ -2,41 +2,43 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 파일 업로드 또는 로컬 데이터 로딩
+# 엑셀 파일 로딩
 @st.cache_data
 def load_data():
-    df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx")
-    df.columns = df.columns.str.strip()  # 공백 제거
+    df = pd.read_excel("KOBIS_역대_박스오피스_내역_공식통계_기준__2025-06-05.xlsx")
     return df
 
+# 데이터 불러오기
 df = load_data()
 
-st.title("🎬 국가별 영화 비율 분석 (KOBIS 박스오피스 데이터)")
-st.markdown("영화진흥위원회 데이터 기반 국가별 영화 수/비율 시각화")
+st.title("국가별 박스오피스 비율 조회")
 
-# 국가명 컬럼 추정 (예: '국적' 또는 '제작국가')
-country_column = None
-for col in df.columns:
-    if "국" in col and ("국가" in col or "적" in col):
-        country_column = col
-        break
+# 사용자 입력 받기
+country_input = st.text_input("국가명을 입력하세요 (예: 한국, 미국, 일본):")
 
-if country_column:
-    country_counts = df[country_column].value_counts()
-    country_ratio = (country_counts / country_counts.sum()) * 100
+if country_input:
+    # '국적' 또는 유사한 컬럼명이 있어야 함
+    if '국적' not in df.columns:
+        st.error("'국적' 컬럼이 존재하지 않습니다. 데이터 파일 구조를 확인해주세요.")
+    else:
+        # 국가 기준 그룹화
+        grouped = df.groupby('국적')['매출액'].sum()
+        total_sales = grouped.sum()
 
-    st.subheader("📊 국가별 영화 수")
-    st.bar_chart(country_counts)
+        if country_input in grouped:
+            country_sales = grouped[country_input]
+            percentage = (country_sales / total_sales) * 100
 
-    st.subheader("📈 국가별 영화 비율 (%)")
-    fig, ax = plt.subplots()
-    country_ratio.plot(kind="pie", autopct="%.1f%%", ax=ax, ylabel='')
-    ax.set_title("국가별 비율")
-    st.pyplot(fig)
+            st.success(f"{country_input} 영화의 박스오피스 점유율: {percentage:.2f}%")
 
-    st.markdown("원하는 국가를 선택해서 개별 비율 확인할 수도 있어요.")
-    selected_country = st.selectbox("국가 선택", country_counts.index)
-    st.write(f"'{selected_country}'의 영화 수: {country_counts[selected_country]}편")
-    st.write(f"전체 대비 비율: {country_ratio[selected_country]:.2f}%")
-else:
-    st.error("❌ 국가 정보를 포함한 열(예: '제작국가', '국적')을 찾을 수 없습니다.")
+            # 파이 차트 시각화
+            others_sales = total_sales - country_sales
+            fig, ax = plt.subplots()
+            ax.pie([country_sales, others_sales],
+                   labels=[country_input, '기타 국가'],
+                   autopct='%1.1f%%',
+                   colors=['#4CAF50', '#CCCCCC'])
+            st.pyplot(fig)
+        else:
+            st.warning(f"{country_input}에 해당하는 국적 정보가 없습니다.")
+
