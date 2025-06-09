@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 # 파일 업로드 또는 로컬 데이터 로딩
 @st.cache_data
 def load_data():
-    # xlsx 파일로 바꾼 후 이 경로로 수정
-    df = pd.read_excel("kobis_boxoffice.xlsx")
-    df.columns = df.columns.str.strip()
+    df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx")
+    df.columns = df.columns.str.strip()  # 공백 제거
     return df
 
 df = load_data()
