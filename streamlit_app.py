@@ -4,9 +4,13 @@ import matplotlib.pyplot as plt
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx")
-    df.columns = df.columns.str.strip()  # 열 이름 공백 제거
-    return df
+    try:
+        df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx", engine="openpyxl")
+        df.columns = df.columns.str.strip()
+        return df
+    except Exception as e:
+        st.error(f"파일 로드 중 오류 발생: {e}")
+        return pd.DataFrame()  # 빈 데이터프레임 반환
 
 df = load_data()
 
