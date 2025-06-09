@@ -1,33 +1,39 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel("KOBIS_역대_박스오피스_내역_공식통계_기준__2025-06-05.xlsx", header=[6, 7])
-    df.columns = df.columns.map(lambda x: (str(x[0]).strip(), str(x[1]).strip()))  # 문자열화 + 공백 제거
+    df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx")
+    df.columns = df.columns.str.strip()  # 열 이름 공백 제거
     return df
 
 df = load_data()
 
-st.title("🎬 영화별 관객 수 조회기")
+st.title("🎬 국가별 영화 비율 분석")
+st.markdown("KOBIS 박스오피스 데이터를 기반으로 제작 국가 비율을 분석합니다.")
 
-movie_col = ('영화명', '')  # 2단 헤더에서 하위가 빈 경우
-aud_col = ('관객수', '(S:서울 기준)')
+# '국가' 관련 열 자동 탐색
+country_column = None
+for col in df.columns:
+    if "국" in col and ("국가" in col or "적" in col):
+        country_column = col
+        break
 
-movie_name = st.text_input("영화 제목을 입력하세요:")
+if country_column:
+    country_counts = df[country_column].value_counts()
+    country_ratio = (country_counts / country_counts.sum()) * 100
 
-if movie_name:
-    if movie_col not in df.columns or aud_col not in df.columns:
-        st.error("컬럼명이 일치하지 않습니다. 실제 컬럼 목록:")
-        st.write(df.columns.tolist())
-    else:
-        result = df[df[movie_col].str.contains(movie_name, case=False, na=False)]
+    st.subheader("📊 국가별 영화 수")
+    st.bar_chart(country_counts)
 
-        if not result.empty:
-            st.subheader("조회 결과")
-            for _, row in result.iterrows():
-                title = row[movie_col]
-                audience = int(row[aud_col])
-                st.write(f"🎞 **{title}** → 👥 {audience:,}명 관람")
-        else:
-            st.warning(f"'{movie_name}'에 해당하는 영화를 찾을 수 없습니다.")
+    st.subheader("📈 국가별 영화 비율 (%)")
+    fig, ax = plt.subplots()
+    country_ratio.plot(kind="pie", autopct="%.1f%%", ax=ax, ylabel='')
+    ax.set_title("국가별 비율")
+    st.pyplot(fig)
+
+    selected = st.selectbox("🎯 특정 국가 선택", country_counts.index)
+    st.write(f"**{selected}**: {country_counts[selected]}편 / {country_ratio[selected]:.2f}%")
+else:
+    st.error("❌ 국가 정보를 포함한 열(예: '제작국가', '국적')을 찾을 수 없습니다.")
