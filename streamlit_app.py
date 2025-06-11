@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
+
+# ✅ 한글 폰트 설정 (윈도우 / 맥 / 리눅스 등 모두 대응)
+matplotlib.rcParams['font.family'] = 'Malgun Gothic'  # 윈도우
+matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+
 
 st.title("🎬 국가별 영화 비율 분석")
 st.markdown("KOBIS 박스오피스 데이터를 기반으로 제작 국가 비율을 분석합니다.")
