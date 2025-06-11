@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
+
 import matplotlib.font_manager as fm
 import os
-
 # Streamlit Cloud용 한글 폰트 설정
 font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
 if os.path.exists(font_path):
