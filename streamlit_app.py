@@ -1,12 +1,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import os
 
-# ✅ 한글 폰트 설정 (윈도우 / 맥 / 리눅스 등 모두 대응)
-matplotlib.rcParams['font.family'] = 'Malgun Gothic'  # 윈도우
-matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+# Streamlit Cloud용 한글 폰트 설정
+font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
+if os.path.exists(font_path):
+    font_name = fm.FontProperties(fname=font_path).get_name()
+    plt.rc('font', family=font_name)
+    plt.rcParams['axes.unicode_minus'] = False
+
 
 
 st.title("🎬 국가별 영화 비율 분석")
