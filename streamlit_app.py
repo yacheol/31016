@@ -7,10 +7,6 @@ def load_data():
     try:
         df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx", engine="openpyxl")
         df.columns = df.columns.str.strip()
-        return df
-    except Exception as e:
-        st.error(f"❌ 파일 로드 중 오류 발생: {e}")
-        return pd.DataFrame()
 
 df = load_data()
 
