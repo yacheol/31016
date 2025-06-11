@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv(KOBIS_역대_박스오피스_내역(공식통계_기준)_2025_06_05.csv, encoding="utf-8")  # 또는 'cp949'로 바꿔도 됨
+        df = pd.read_csv("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025_06_05.csv", encoding="utf-8")  # 또는 'cp949'로 바꿔도 됨
         df.columns = df.columns.str.strip()
         return df
     except Exception as e:
