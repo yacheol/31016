@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_excel("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025-06-05.xlsx", engine="openpyxl")
+        df = pd.read_csv("KOBIS_역대_박스오피스_내역(공식통계_기준)_2025_06_05.csv", encoding="utf-8")  # 또는 'cp949'로 바꿔도 됨
         df.columns = df.columns.str.strip()
         return df
     except Exception as e:
-        st.error(f"❌ 파일 로드 중 오류 발생: {e}")
+        st.error(f"❌ 파일 로드 오류: {e}")
         return pd.DataFrame()
 
 df = load_data()
@@ -18,7 +18,7 @@ st.title("🎬 국가별 영화 비율 분석")
 st.markdown("KOBIS 박스오피스 데이터를 기반으로 제작 국가 비율을 분석합니다.")
 
 if not df.empty:
-    # '국가' 관련 열 자동 탐색
+    # '국가' 관련 열 찾기
     country_column = None
     for col in df.columns:
         if "국" in col and ("국가" in col or "적" in col):
@@ -41,6 +41,7 @@ if not df.empty:
         selected = st.selectbox("🎯 특정 국가 선택", country_counts.index)
         st.write(f"**{selected}**: {country_counts[selected]}편 / {country_ratio[selected]:.2f}%")
     else:
-        st.warning("⚠️ 국가 관련 열(예: '제작국가', '국적')을 찾을 수 없습니다.")
+        st.warning("⚠️ '제작국가' 또는 '국적' 열을 찾을 수 없습니다.")
 else:
-    st.info("ℹ️ 데이터를 불러오지 못했습니다. 파일을 다시 확인해 주세요.")
+    st.info("ℹ️ 데이터를 불러오지 못했습니다. CSV 파일을 확인하세요.")
+
